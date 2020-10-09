@@ -1,0 +1,28 @@
+<launch>
+
+    <!-- 设置launch文件的参数 -->
+    <arg name="world_name" value="$(find ares_gazebo)/worlds/grassground.world"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+    <arg name="rb1x" default="0.0"/>
+    <arg name="rb1y" default="1.0"/>
+    <arg name="rb2x" default="2.0"/>
+    <arg name="rb2y" default="3.0"/>
+    <arg name="rb3x" default="4.0"/>
+    <arg name="rb3y" default="5.0"/>
+    
+    <group ns="robot1">
+        <node pkg="controller" name="controller" type="controller_flowfield.py" args="8" output="screen"/>
+    </group>
+    
+    <group ns="robot2">
+        <node pkg="controller" name="controller" type="controller_flowfield.py" args="10" output="screen"/>
+    </group>
+    
+    <group ns="robot3">
+        <node pkg="controller" name="controller" type="controller_flowfield.py" args="12" output="screen"/>
+    </group>
+</launch> 
