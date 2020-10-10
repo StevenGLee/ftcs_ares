@@ -32,7 +32,7 @@
             <param name="publish_frequency" type="double" value="50.0" />
         </node>
         <node pkg="velocity_manager" name="velocity_manager" type="velocity_manager_first_order.py" output="screen"/>
-        <node pkg="flowfield_generator" name="flowfield_generator" type="speed_invariant-direction_temporally_variant-flow.py" output="screen"/>
+        <node pkg="flowfield_generator" name="flowfield_generator" type="periodical-random_velocity-flow.py" output="screen"/>
         <node name="urdf_spawner1" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model robot1 -param robot_description -x $(arg rb1x) -y $(arg rb1y)"/>   
     </group>
     
@@ -43,7 +43,7 @@
             <param name="publish_frequency" type="double" value="50.0" />
         </node>
         <node pkg="velocity_manager" name="velocity_manager" type="velocity_manager_first_order.py" output="screen"/>
-        <node pkg="flowfield_generator" name="flowfield_generator" type="speed_invariant-direction_temporally_variant-flow.py" output="screen"/>
+        <node pkg="flowfield_generator" name="flowfield_generator" type="periodical-random_velocity-flow.py" output="screen"/>
         <node name="urdf_spawner2" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model robot2 -param robot_description -x $(arg rb2x) -y $(arg rb2y)"/>   
     </group>
     
@@ -54,7 +54,7 @@
             <param name="publish_frequency" type="double" value="50.0" />
         </node>
         <node pkg="velocity_manager" name="velocity_manager" type="velocity_manager_first_order.py" output="screen"/>
-        <node pkg="flowfield_generator" name="flowfield_generator" type="speed_invariant-direction_temporally_variant-flow.py" output="screen"/>
+        <node pkg="flowfield_generator" name="flowfield_generator" type="periodical-random_velocity-flow.py" output="screen"/>
         <node name="urdf_spawner3" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model robot3 -param robot_description -x $(arg rb3x) -y $(arg rb3y)"/>   
     </group>
 </launch> 

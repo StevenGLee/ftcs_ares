@@ -4,7 +4,7 @@
 import rospy
 from geometry_msgs.msg import Twist, Accel
 from nav_msgs.msg import Odometry
-from math import atan2
+from math import atan2, sqrt
 
 #全局变量声明
 flowfield_velocity_latest = Twist() #记录最后一个到来的流场数据
@@ -12,6 +12,20 @@ control_msg_latest = Twist() #记录最后一个到来的控制输入
 expect_velocity = Twist() #记录当前的静场运动速度
 ground_truth_latest = Odometry() #记录当前的实时状态
 flowfield_direction_publisher  = rospy.Publisher('flowfield_direction', Twist, queue_size=10)
+
+def sign(x):
+    if x>0.0:
+        return 1.0
+    elif x==0.0:
+        return 0.0
+    else:
+        return -1.0
+    
+def sat(x):
+    if abs(x) <= 5:
+        return x
+    else:
+        return 5*sign(x)
 
 def OnFlowfieldMsg(flowfield_velocity):
     #全局变量声明
@@ -69,9 +83,6 @@ def velocity_manager():
         kd = 1
         cmd_vel.angular.z = kp * e + kd * (e - prev_e)
         prev_e = e
-        # 对控制输入进行积分
-        #expect_velocity.linear.x += control_msg_latest.linear.x/20
-        #expect_velocity.linear.y += control_msg_latest.linear.y/20
 
         #求出实际运动速度
         cmd_vel.linear.x=flowfield_velocity_latest.linear.x + control_msg_latest.linear.x

@@ -54,10 +54,10 @@ def sign(x):
         return -1.0
     
 def sat(x):
-    if abs(x) <= 0.05:
-        return 1/0.05*x
+    if abs(x) <= 5:
+        return x
     else:
-        return 1*sign(x)
+        return 5*sign(x)
     
 def Controller_flowfield():
     global flowfield_velocity_latest
@@ -67,9 +67,11 @@ def Controller_flowfield():
     global a1
     global a2
     global a3
-    k1 = 1  
+    k1 = 10  
     k2 = 5  
-    a = 0.1
+    k3 = 1
+    k4 = 5
+    a = 0.2
     
     rho = float(sys.argv[1])
     
@@ -91,40 +93,68 @@ def Controller_flowfield():
     
     x = ground_truth_latest.pose.pose.position.x
     y = ground_truth_latest.pose.pose.position.y
+
     xi = atan2(x, y)
     #if(x<0):
     #    xi -= pi
     pos = mat([[x],[y]])
     start_time = rospy.get_time()
+    Lambda = 0
+    Lambda_int = 0
     while not rospy.is_shutdown():  
         prev_x = x
         prev_y = y
         x = ground_truth_latest.pose.pose.position.x
         y = ground_truth_latest.pose.pose.position.y
         pos = mat([[x],[y]])
-        
+
         #计算本机xi
-        xi += acos((x*prev_x + y*prev_y) / sqrt((x*x + y*y) * (prev_x**2 + prev_y**2)))
+        if (y>=0 and prev_y>=0 and x<=prev_x) or (y<=0 and prev_y<=0 and x>=prev_x) or (x>=0 and prev_x>=0 and y>=prev_y) or (x<=0 and prev_x<=0 and y<=prev_y):
+            xi -= acos((x*prev_x + y*prev_y) / sqrt((x*x + y*y) * (prev_x**2 + prev_y**2)))
+        else:
+            xi += acos((x*prev_x + y*prev_y) / sqrt((x*x + y*y) * (prev_x**2 + prev_y**2)))
+        expect_xi = a*(rospy.get_time() - start_time)
+        xicha=xi-expect_xi
+        if xicha > pi:
+            xicha -= pi
+        if xicha < -pi:
+            xicha += pi
+        if xicha < 0.1:
+            xi = atan2(x, y)
+            while abs(xi - expect_xi) > pi:
+                xi += 2*pi
+            xicha=xi-expect_xi
         xi_msg = Vector3()
         xi_msg.x = xi
         xi_publisher.publish(xi_msg)
+        Lambda_prev = Lambda
         Lambda = 1 - 1/rho * sqrt(x**2 + y**2)
+        Lambda_int += Lambda
+        if Lambda_int>7:
+            Lambda_int = 7
+        if Lambda_int<-7:
+            Lambda_int=-7
+        dLambda = Lambda - Lambda_prev
         f00 = log(abs(1+Lambda)) - log(abs(Lambda-1)) + 5*Lambda
-        N = pos / (rho * linalg.norm(pos)) #N方向，norm二范数
+        N = pos / linalg.norm(pos) #N方向，norm二范数
         T = mat([[0, 1], [-1, 0]]) * N                 #T方向
         pksi=1/rho                                     #偏xi除以偏s
-        
-        #判断通讯时间的关系,产生通讯间隔
-        xicha=xi-a*(rospy.get_time() - start_time)
+
         #控制率
-        vn=k1*f00+0.5*sat(f00)
+        vn=k1*f00 + k3 * abs(Lambda) * Lambda_int - k4 * dLambda * (abs((1 - Lambda)/2 + abs(1 - Lambda)/2) + abs((1 + Lambda)/2 + abs(1+ Lambda)/2))
         #vn=5*(Lambda-1)
         vt=linalg.norm(T)*(1/pksi)*(a-k2*((a1+a2+a3)*xi-a1*xi1-a2*xi2-a3*xi3)-20*xicha)#sat(xicha))
+        v_square = vn**2 + vt**2
+        if v_square >= 50:
+            vn *= sqrt(50/v_square)
+            vt *= sqrt(50/v_square)
         vx=mat([1, 0]) * linalg.pinv(vstack((N.T, T.T))) * vstack((vn, vt))
         vy=mat([0, 1]) * linalg.pinv(vstack((N.T, T.T))) * vstack((vn, vt))
         print("-----")
         print(Lambda)
-        print(vx)
+        print("N:",N,", T:", T)
+        print("vn:%f, vt:%f"%(vn, vt))
+        print("vx:%f, vy:%f"%(vx, vy))
         print("xi1:%f xi2:%f xi3:%f xhicha:%f" %(xi1, xi2, xi3, xicha))
         #print(vy)
         control_msg = Twist()
