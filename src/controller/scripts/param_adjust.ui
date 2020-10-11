@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>694</height>
+    <height>734</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>编队参数调整</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>331</width>
-     <height>681</height>
+     <height>721</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -32,7 +32,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>20</y>
+         <y>30</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -64,7 +64,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>60</y>
+         <y>70</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -96,7 +96,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>140</y>
+         <y>150</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -118,7 +118,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
+         <y>110</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -140,7 +140,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>180</y>
+         <y>190</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -169,7 +169,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>180</y>
+         <y>190</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -191,7 +191,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>60</y>
+         <y>70</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -223,7 +223,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>140</y>
+         <y>150</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -245,7 +245,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
+         <y>110</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -267,7 +267,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>20</y>
+         <y>30</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -306,7 +306,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>180</y>
+         <y>190</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -328,7 +328,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>60</y>
+         <y>70</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -360,7 +360,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>140</y>
+         <y>150</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -382,7 +382,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
+         <y>110</y>
          <width>311</width>
          <height>31</height>
         </rect>
@@ -404,7 +404,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>20</y>
+         <y>30</y>
          <width>311</width>
          <height>31</height>
         </rect>
