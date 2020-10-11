@@ -38,7 +38,7 @@ def OnFormation(formation):
         return
     elif controlling == 0:
         start_time = rospy.get_time()
-        controlling = 1
+        
     xi_bias = formation.theta
     x_bias = formation.position.x
     y_bias = formation.position.y
@@ -46,6 +46,9 @@ def OnFormation(formation):
     y_scope = formation.scale.y
     clockwise_rotate = formation.clockwise_rotation
     a=formation.speed
+    if controlling == 0:
+        controlling = 1
+        xi = atan2(ground_truth_latest.pose.pose.position.x - x_bias, ground_truth_latest.pose.pose.position.y - y_bias) - xi_bias
 
 
 
@@ -69,9 +72,9 @@ def OnTopology(topology):
     global a1
     global a2
     global a3
-    a1 = topology[0]
-    a2 = topology[1]
-    a3 = topology[2]
+    a1 = topology.data[0]
+    a2 = topology.data[1]
+    a3 = topology.data[2]
 
 def sign(x):
     if x>0.0:
@@ -154,7 +157,7 @@ def Controller_flowfield():
             xi_msg = Vector3()
             xi_msg.x = xi
             xi_publisher.publish(xi_msg)
-            rho = sqrt(x_scope*cos(xi - clockwise_rotate + xi_bias)**2 + y_scope*sin(xi - clockwise_rotate + xi_bias)**2)
+            rho = sqrt((x_scope*cos(xi - clockwise_rotate + xi_bias))**2 + (y_scope*sin(xi - clockwise_rotate + xi_bias))**2)
             Lambda_prev = Lambda
             Lambda = 1 - 1/rho * sqrt(x**2 + y**2)
             Lambda_int += Lambda
@@ -164,7 +167,8 @@ def Controller_flowfield():
                 Lambda_int=-7
             dLambda = Lambda - Lambda_prev
             f00 = log(abs(1+Lambda)) - log(abs(Lambda-1)) + 5*Lambda
-            N = pos / linalg.norm(pos) #N方向，norm二范数
+            NNN = vstack((pos.tolist()[0][0]/(x_scope**2), pos.tolist()[1][0]/(y_scope**2)))
+            N = NNN / linalg.norm(NNN) #N方向，norm二范数
             T = mat([[0, 1], [-1, 0]]) * N                 #T方向
             pksi=1/rho                                     #偏xi除以偏s
 

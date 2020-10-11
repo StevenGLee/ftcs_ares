@@ -44,7 +44,8 @@ def topology_publisher():
     global position_Robot2
     global position_Robot3
     global dist_range
-    
+
+    rospy.init_node('topology_publisher', anonymous=False)
     topology_pub1 = rospy.Publisher('/robot1/topology', Int8Vector, queue_size=10)
     topology_pub2 = rospy.Publisher('/robot2/topology', Int8Vector, queue_size=10)
     topology_pub3 = rospy.Publisher('/robot3/topology', Int8Vector, queue_size=10)
@@ -64,14 +65,36 @@ def topology_publisher():
         topology1.data = [0, 0, 0] 
         topology1.data = [0, 0, 0]
         if sys.argv[2] == 'dynamic_topology':
-            topology1.data = [0, can_comm(position_Robot1, position_Robot2), can_comm(position_Robot1, position_Robot3)] 
-            topology2.data = [can_comm(position_Robot2, position_Robot1), 0, can_comm(position_Robot2, position_Robot3)] 
-            topology3.data = [can_comm(position_Robot3, position_Robot1), can_comm(position_Robot3, position_Robot2), 0]
+            #topology1.data = [0, can_comm(position_Robot1, position_Robot2), can_comm(position_Robot1, position_Robot3)] 
+            topology1.data.append(0)
+            topology1.data.append(can_comm(position_Robot1, position_Robot2))
+            topology1.data.append(can_comm(position_Robot1, position_Robot3))
+
+            #topology2.data = [can_comm(position_Robot2, position_Robot1), 0, can_comm(position_Robot2, position_Robot3)] 
+            topology2.data.append(can_comm(position_Robot2, position_Robot1))
+            topology2.data.append(0)
+            topology2.data.append(an_comm(position_Robot2, position_Robot3))
+
+            #topology3.data = [can_comm(position_Robot3, position_Robot1), can_comm(position_Robot3, position_Robot2), 0]
+            topology3.data.append(can_comm(position_Robot3, position_Robot1))
+            topology3.data.append(can_comm(position_Robot3, position_Robot2))
+            topology3.data.append(0)
 
         else:
-            topology1.data = [0, 1, 1] 
-            topology1.data = [1, 0, 1] 
-            topology1.data = [1, 1, 0]
+            #topology1.data = [0, 1, 1] 
+            topology1.data.append(0)
+            topology1.data.append(1)
+            topology1.data.append(1)
+
+            #topology2.data = [1, 0, 1]
+            topology2.data.append(1)
+            topology2.data.append(0)
+            topology2.data.append(1) 
+
+            #topology3.data = [1, 1, 0]
+            topology3.data.append(1)
+            topology3.data.append(1)
+            topology3.data.append(0)
         
         topology_pub1.publish(topology1)
         topology_pub2.publish(topology2)
@@ -82,7 +105,7 @@ def topology_publisher():
 
 if __name__ == '__main__':
     try:
-        topology_publisher
+        topology_publisher()
     except rospy.ROSInterruptException as r:
         rospy.loginfo("topology_publisher node terminated.") 
         rospy.loginfo(r) 

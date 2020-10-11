@@ -41,9 +41,9 @@ def OnTopology(topology):
     global a1
     global a2
     global a3
-    a1 = topology[0]
-    a2 = topology[1]
-    a3 = topology[2]
+    a1 = topology.data[0]
+    a2 = topology.data[1]
+    a3 = topology.data[2]
 
 def sign(x):
     if x>0.0:
