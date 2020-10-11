@@ -141,7 +141,7 @@ def Controller_flowfield():
         pksi=1/rho                                     #偏xi除以偏s
 
         #控制率
-        vn=k1*f00 + k3 * abs(Lambda) * Lambda_int - k4 * dLambda * (abs((1 - Lambda)/2 + abs(1 - Lambda)/2) + abs((1 + Lambda)/2 + abs(1+ Lambda)/2))
+        vn=k1*f00 + k3 * abs(Lambda) * Lambda_int - k4 * dLambda * (abs((0.2 - Lambda)/2 + abs(0.2 - Lambda)/2) + abs((0.2 + Lambda)/2 + abs(0.2 + Lambda)/2)) * 5
         #vn=5*(Lambda-1)
         vt=linalg.norm(T)*(1/pksi)*(a-k2*((a1+a2+a3)*xi-a1*xi1-a2*xi2-a3*xi3)-20*xicha)#sat(xicha))
         v_square = vn**2 + vt**2
