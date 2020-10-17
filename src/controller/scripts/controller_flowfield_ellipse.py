@@ -7,7 +7,7 @@ import sys
 from geometry_msgs.msg import Twist, Accel, Vector3
 from nav_msgs.msg import Odometry
 from ftcs_control_msg.msg import Int8Vector, Formation
-from math import sqrt, log, atan2, acos, pi
+from math import sqrt, log, atan2, acos, pi, sin, cos
 
 from numpy import *
 
@@ -97,7 +97,7 @@ def Controller_flowfield():
     global xi_bias, x_bias, y_bias, x_scope, y_scope, clockwise_rotate, a, controlling
 
     k1 = 10  
-    k2 = 5  
+    k2 = 10  
     k3 = 1
     k4 = 5
     
@@ -139,21 +139,11 @@ def Controller_flowfield():
             pos = mat([[x],[y]])
 
             #计算本机xi
-            if (y>=0 and prev_y>=0 and x<=prev_x) or (y<=0 and prev_y<=0 and x>=prev_x) or (x>=0 and prev_x>=0 and y>=prev_y) or (x<=0 and prev_x<=0 and y<=prev_y):
-                xi -= acos((x*prev_x + y*prev_y) / sqrt((x*x + y*y) * (prev_x**2 + prev_y**2)))
-            else:
-                xi += acos((x*prev_x + y*prev_y) / sqrt((x*x + y*y) * (prev_x**2 + prev_y**2)))
             expect_xi = a*(rospy.get_time() - start_time)
+            xi = atan2(x, y) - xi_bias
+            while abs(xi - expect_xi) > pi:
+                xi += 2*pi
             xicha=xi-expect_xi
-            if xicha > pi:
-                xicha -= pi
-            if xicha < -pi:
-                xicha += pi
-            if xicha < 0.1:
-                xi = atan2(x, y) - xi_bias
-                while abs(xi - expect_xi) > pi:
-                    xi += 2*pi
-                xicha=xi-expect_xi
             xi_msg = Vector3()
             xi_msg.x = xi
             xi_publisher.publish(xi_msg)
@@ -167,7 +157,8 @@ def Controller_flowfield():
                 Lambda_int=-7
             dLambda = Lambda - Lambda_prev
             f00 = log(abs(1+Lambda)) - log(abs(Lambda-1)) + 5*Lambda
-            NNN = vstack((pos.tolist()[0][0]/(x_scope**2), pos.tolist()[1][0]/(y_scope**2)))
+            rotate=mat([[sin(clockwise_rotate), -cos(clockwise_rotate)],[cos(clockwise_rotate), sin(clockwise_rotate)]])
+            NNN = rotate * mat([[1/(x_scope**2),0],[0,1/(y_scope**2)]]) * linalg.pinv(rotate) * pos
             N = NNN / linalg.norm(NNN) #N方向，norm二范数
             T = mat([[0, 1], [-1, 0]]) * N                 #T方向
             pksi=1/rho                                     #偏xi除以偏s
@@ -175,7 +166,7 @@ def Controller_flowfield():
             #控制率
             vn=k1*f00 + k3 * abs(Lambda) * Lambda_int - k4 * dLambda * (-abs(Lambda) + 0.2 + abs(abs(Lambda)-0.2)) * 5
             #vn=5*(Lambda-1)
-            vt=linalg.norm(T)*(1/pksi)*(a-k2*((a1+a2+a3)*xi-a1*xi1-a2*xi2-a3*xi3)-20*xicha)#sat(xicha))
+            vt=linalg.norm(T)*(1/pksi)*(0-k2*((a1+a2+a3)*xi-a1*xi1-a2*xi2-a3*xi3)-20*xicha)#sat(xicha))
             v_square = vn**2 + vt**2
             if v_square >= 50:
                 vn *= sqrt(50/v_square)

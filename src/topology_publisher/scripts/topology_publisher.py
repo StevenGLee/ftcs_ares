@@ -57,13 +57,11 @@ def topology_publisher():
         if len(sys.argv) > 2:
             dist_range = float(sys.argv[1])
         
-    topology1 = Int8Vector()
-    topology2 = Int8Vector()
-    topology3 = Int8Vector()
+
     while not rospy.is_shutdown():  
-        topology1.data = [0, 0, 0] 
-        topology1.data = [0, 0, 0] 
-        topology1.data = [0, 0, 0]
+        topology1 = Int8Vector()
+        topology2 = Int8Vector()
+        topology3 = Int8Vector()
         if sys.argv[2] == 'dynamic_topology':
             #topology1.data = [0, can_comm(position_Robot1, position_Robot2), can_comm(position_Robot1, position_Robot3)] 
             topology1.data.append(0)
